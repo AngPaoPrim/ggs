@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Panel</title>
+</head>
+<body>
+  <h2>Admin - จัดการอีเมล</h2>
+
+  <input id="emailInput" type="email" placeholder="กรอกอีเมลใหม่">
+  <button onclick="addEmail()">เพิ่มอีเมล</button>
+
+  <h3>อีเมลที่อนุมัติแล้ว:</h3>
+  <ul id="emailList"></ul>
+
+  <script>
+    async function fetchEmails() {
+      const res = await fetch("/admin/allowed-emails");
+      const emails = await res.json();
+      const list = document.getElementById("emailList");
+      list.innerHTML = "";
+      emails.forEach(email => {
+        const li = document.createElement("li");
+        li.textContent = email + " ";
+        // ปุ่มลบ
+        const btn = document.createElement("button");
+        btn.textContent = "ลบ";
+        btn.onclick = () => removeEmail(email);
+        li.appendChild(btn);
+        list.appendChild(li);
+      });
+    }
+
+    async function addEmail() {
+      const email = document.getElementById("emailInput").value.trim();
+      if (!email) return alert("กรุณากรอกอีเมล");
+
+      const res = await fetch("/admin/add-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email })
+      });
+
+      const result = await res.json();
+      alert(result.message || result.error);
+      document.getElementById("emailInput").value = "";
+      fetchEmails();
+    }
+
+    async function removeEmail(email) {
+      if (!confirm("ต้องการลบอีเมลนี้ใช่หรือไม่?")) return;
+      const res = await fetch("/admin/remove-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email })
+      });
+      const result = await res.json();
+      alert(result.message || result.error);
+      fetchEmails();
+    }
+
+    fetchEmails();
+  </script>
+</body>
+</html>

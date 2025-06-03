@@ -1,0 +1,39 @@
+body {
+    background-image: url('4882066.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center;
+}
+.h22 {
+    color: whitesmoke;
+    position: relative;
+    margin-top: 5%;
+    margin-left: 35%;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+.gmail {
+    color: black;
+    text-align: center;
+    border-radius: 10px;
+    background-color: aqua;
+    box-shadow: 25px 25px 35px rgb(0, 0, 0);
+    position: relative;
+    margin-top: 15%;
+    margin-left: 25%;
+    width: 25em;
+    height: 3em;
+}
+.btn1  {
+    color: black;
+    width: 10em;
+    height: 3em;
+    margin-top: 5%;
+    margin-left: 2%;
+    background-color: aqua;
+    box-shadow: 25px 25px 35px rgb(0, 0, 0);
+    margin-bottom: 200px;
+    position: relative;
+    border-radius: 8px;
+}
