@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <title>เข้าสู่ระบบสำเร็จ</title>
+    <title>เข้าสู่ระบบสําเร็จ</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         * {
@@ -42,6 +42,7 @@
             position: absolute;
             opacity: 0.1;
             animation: float 25s infinite linear;
+            transition: all 0.3s ease;
         }
 
         .shape:nth-child(1) {
@@ -233,6 +234,17 @@
             gap: 1rem;
         }
 
+        .logout-animation {
+            animation: fadeOut 0.5s ease-out forwards;
+        }
+
+        @keyframes fadeOut {
+            to {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+        }
+
         @media (max-width: 768px) {
             .welcome-container {
                 padding: 2.5rem 2rem;
@@ -291,7 +303,7 @@
             <i class="fas fa-check"></i>
         </div>
 
-        <h1>เข้าสู่ระบบสำเร็จ!</h1>
+        <h1>เข้าสู่ระบบสําเร็จ!</h1>
         <p class="welcome-subtitle">ยินดีต้อนรับสู่ระบบ คุณสามารถใช้งานได้เต็มที่แล้ว</p>
         
         <div class="button-group">
@@ -311,27 +323,59 @@
         // Store login state in memory
         let loginState = {
             isLoggedIn: true,
-            loginTime: new Date().toISOString()
+            loginTime: new Date().toISOString(),
+            user: 'current_user'
         };
 
         function logout() {
+            // Add loading animation
+            const container = document.querySelector('.welcome-container');
+            container.classList.add('logout-animation');
+            
             // Clear login state
             loginState.isLoggedIn = false;
+            loginState.user = null;
             
-            // Redirect to login page
-            window.location.href = "/index.html";
+            // Show logout message
+            setTimeout(() => {
+                alert('ออกจากระบบเรียบร้อยแล้ว');
+                // In a real app, you would redirect to login page
+                // window.location.href = "/index.html";
+                
+                // For demo purposes, reload the page
+                window.location.reload();
+            }, 500);
         }
 
         function goToCross() {
+            // Check if still logged in
+            if (!loginState.isLoggedIn) {
+                alert('กรุณาเข้าสู่ระบบก่อน');
+                return;
+            }
+            
             // Navigate to cross page
-            window.location.href = "https://ggs-27z0.onrender.com/cross.html";
+            const url = "https://ggs-27z0.onrender.com/cross.html";
+            
+            // Show loading message
+            const btn = event.target;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังเปิด...';
+            btn.disabled = true;
+            
+            setTimeout(() => {
+                window.open(url, '_blank');
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }, 1000);
         }
 
         // Check login status on page load
         function checkLoginStatus() {
             // In a real application, you would validate with server
             if (!loginState.isLoggedIn) {
-                window.location.href = "/index.html";
+                // window.location.href = "/index.html";
+                console.log('User not logged in');
             }
         }
 
@@ -339,7 +383,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             checkLoginStatus();
             
-            // Add some interactive effects
+            // Add interactive effects to floating shapes
             const shapes = document.querySelectorAll('.shape');
             shapes.forEach((shape, index) => {
                 shape.addEventListener('mouseenter', function() {
@@ -352,12 +396,31 @@
                     this.style.transform = 'scale(1)';
                 });
             });
+
+            // Add click effect to success icon
+            const successIcon = document.querySelector('.success-icon');
+            successIcon.addEventListener('click', function() {
+                this.style.animation = 'none';
+                setTimeout(() => {
+                    this.style.animation = 'bounce 2s ease-in-out infinite';
+                }, 100);
+            });
         });
 
         // Add keyboard shortcuts
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
                 logout();
+            }
+            if (e.key === 'Enter' && e.ctrlKey) {
+                goToCross();
+            }
+        });
+
+        // Prevent back button after logout
+        window.addEventListener('beforeunload', function() {
+            if (!loginState.isLoggedIn) {
+                return 'คุณได้ออกจากระบบแล้ว';
             }
         });
     </script>
